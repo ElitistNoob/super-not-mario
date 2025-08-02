@@ -1,0 +1,56 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+.Python
+
+# Editor/IDE configs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS-specific
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
+
+# Python environment variables
+.env
+
+# Compiled Pygame images (if you convert or cache any)
+*.bmp
+*.tga
+
+# Pygame-generated build folders (if packaging with cx_Freeze, py2exe, etc.)
+build/
+dist/
+*.egg-info/
+
+# Optional: assets (only if you don’t want to track them)
+# assets/
+# assets/sprites/
+# assets/sounds/
+
+# Optional: ignore test output
+coverage/
+htmlcov/
+*.cover
+.pytest_cache/
+
+# Jupyter / IPython notebooks (if used)
+.ipynb_checkpoints/
+
