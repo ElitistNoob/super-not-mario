@@ -1,4 +1,5 @@
 import pygame
+from settings import GRAVITY
 
 
 class Player(pygame.sprite.Sprite):
@@ -13,7 +14,6 @@ class Player(pygame.sprite.Sprite):
         self.rect.topleft = self.pos
         self.speed = 200
         self.jump_strength = -400
-        self.gravity = 900
         self.on_ground = True
 
     def jump(self):
@@ -29,7 +29,7 @@ class Player(pygame.sprite.Sprite):
         if keys[pygame.K_a]:
             self.velocity.x -= self.speed
 
-        self.velocity.y += self.gravity * dt
+        self.velocity.y += GRAVITY * dt
         self.pos += self.velocity * dt
 
         if self.pos.y >= ground + 200:
