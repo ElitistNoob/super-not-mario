@@ -32,7 +32,10 @@ while running:
     if keys[pygame.K_ESCAPE]:
         running = False
 
-    player.move(keys)
+    if keys[pygame.K_SPACE]:
+        player.jump()
+
+    player.update(keys, dt, start_y)
 
     pygame.display.flip()
     dt = clock.tick(FPS) / 1000
