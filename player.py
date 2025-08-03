@@ -32,7 +32,9 @@ class Player(pygame.sprite.Sprite):
         self.is_moving = False
 
     def get_current_sprite(self, keys):
-        image = self.sprites[self.state][self.image_index]
+        image = pygame.transform.scale(
+            self.sprites[self.state][self.image_index], (27, 27)
+        )
         if keys[pygame.K_a]:
             image = pygame.transform.flip(image, True, False)
 
