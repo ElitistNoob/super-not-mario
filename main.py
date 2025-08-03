@@ -9,16 +9,9 @@ clock = pygame.time.Clock()
 running = True
 dt = 0
 
-
-def load_sprites(type, name):
-    path = os.path.join("assets", "sprites", type, name)
-    return pygame.image.load(path).convert_alpha()
-
-
-player_sprites = {"standing": load_sprites("mario", "small_mario_standing.png")}
-start_x = screen.get_width() / 2
+start_x = screen.get_width() / screen.get_width()
 start_y = screen.get_height() / 2
-player = Player(start_x, start_y, player_sprites)
+player = Player(start_x, start_y)
 
 while running:
     for event in pygame.event.get():
@@ -26,14 +19,12 @@ while running:
             running = False
 
     screen.fill(SKY_COLOR)
-    screen.blit(player.sprites["standing"], player.rect)
 
     keys = pygame.key.get_pressed()
+    screen.blit(player.get_current_sprite(keys), player.pos)
+
     if keys[pygame.K_ESCAPE]:
         running = False
-
-    if keys[pygame.K_SPACE]:
-        player.jump()
 
     player.update(keys, dt, start_y)
 
