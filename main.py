@@ -1,7 +1,6 @@
-import os
 import pygame
+from entities.player.player import Player
 from settings import FPS, SKY_COLOR, SCREEN_WIDTH, SCREEN_HEIGHT
-from player import Player
 
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -9,9 +8,15 @@ clock = pygame.time.Clock()
 running = True
 dt = 0
 
-start_x = screen.get_width() / screen.get_width()
+start_x = screen.get_width() / 2
 start_y = screen.get_height() / 2
+ground_y = screen.get_height() - 200
 player = Player(start_x, start_y)
+
+updatable = pygame.sprite.Group()
+drawable = pygame.sprite.Group()
+
+updatable.add(player)
 
 while running:
     for event in pygame.event.get():
@@ -21,12 +26,14 @@ while running:
     screen.fill(SKY_COLOR)
 
     keys = pygame.key.get_pressed()
-    screen.blit(player.get_current_sprite(keys), player.pos)
 
     if keys[pygame.K_ESCAPE]:
         running = False
 
-    player.update(keys, dt, start_y)
+    for obj in updatable:
+        obj.update(keys, dt, ground_y)
+
+    player.draw(screen)
 
     pygame.display.flip()
     dt = clock.tick(FPS) / 1000
