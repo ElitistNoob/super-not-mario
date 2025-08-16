@@ -14,6 +14,7 @@ class Player(Entity):
         self.rect = self.image.get_rect(center=self.pos)
 
         self.speed = 200
+        self.animation_speed = 5
         self.jump_strength = -400
         self.is_moving = False
         self.on_ground = True
@@ -50,6 +51,26 @@ class Player(Entity):
         if keys[pygame.K_SPACE]:
             self.jump()
 
+    def move(self, dt, ground_y):
+        self.velocity.y += GRAVITY * dt
+        self.velocity.x = self.direction.x * self.speed
+        self.pos += self.velocity * dt
+        self.rect.center = round(self.pos)
+
+        if self.pos.y >= ground_y:
+            self.pos.y = ground_y
+            self.velocity.y = 0
+            self.on_ground = True
+
+    def animate(self, dt):
+        if self.is_moving:
+            self.frame_index += self.animation_speed * dt
+
+        if self.frame_index >= len(self.sprites[self.state]):
+            self.frame_index = 0
+
+        self.image = self.sprites[self.state][int(self.frame_index)]
+
     def draw(self, screen):
         image = self.image
         if self.direction.x == -1:
@@ -58,22 +79,6 @@ class Player(Entity):
 
     def update(self, keys, dt, ground_y):
         self.input(keys)
-
-        if self.is_moving:
-            self.frame_index += 1
-
-        if self.frame_index >= len(self.sprites[self.state]):
-            self.frame_index = 0
-
-        self.velocity.y += GRAVITY * dt
-        self.velocity.x = self.direction.x * self.speed
-        self.pos += self.velocity * dt
-        self.rect.center = self.pos
-
-        if self.pos.y >= ground_y:
-            self.pos.y = ground_y
-            self.velocity.y = 0
-            self.on_ground = True
-
         self.state_handler()
-        self.image = self.sprites[self.state][self.frame_index]
+        self.animate(dt)
+        self.move(dt, ground_y)

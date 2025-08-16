@@ -1,12 +1,12 @@
-import pygame
+import pygame, time
 from entities.player.player import Player
 from settings import FPS, SKY_COLOR, SCREEN_WIDTH, SCREEN_HEIGHT
 
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 clock = pygame.time.Clock()
+prev_time = time.time()
 running = True
-dt = 0
 
 start_x = screen.get_width() / 2
 start_y = screen.get_height() / 2
@@ -19,6 +19,9 @@ drawable = pygame.sprite.Group()
 updatable.add(player)
 
 while running:
+    dt = time.time() - prev_time
+    prev_time = time.time()
+    
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -36,6 +39,6 @@ while running:
     player.draw(screen)
 
     pygame.display.flip()
-    dt = clock.tick(FPS) / 1000
+    dt = clock.tick()
 
 pygame.quit()
