@@ -19,7 +19,9 @@ class Terrain(pygame.sprite.Sprite):
             tiles.append(pos)
 
         return tiles
-
+    
+    def get_height(self):
+        return self.height
 
     def draw(self, screen):
         tiles = self.get_ground()

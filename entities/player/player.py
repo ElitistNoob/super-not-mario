@@ -1,14 +1,14 @@
 import pygame
 from entities.player.sprite_loader import load_player_sprites
-from settings import GRAVITY
+from settings import GRAVITY, SCREEN_HEIGHT
 from entities.entity import Entity
 from entities.state import State
 
 
 class Player(Entity):
-    def __init__(self, x, y):
+    def __init__(self, x, y, terrain):
         super().__init__(x, y)
-
+        self.terrain = terrain
         self.sprites = load_player_sprites()
         self.image = self.sprites[self.state][self.frame_index]
         self.rect = self.image.get_rect(center=self.pos)
@@ -51,14 +51,14 @@ class Player(Entity):
         if keys[pygame.K_SPACE]:
             self.jump()
 
-    def move(self, dt, ground_y):
+    def move(self, dt):
         self.velocity.y += GRAVITY * dt
         self.velocity.x = self.direction.x * self.speed
         self.pos += self.velocity * dt
         self.rect.center = round(self.pos)
 
-        if self.pos.y >= ground_y:
-            self.pos.y = ground_y
+        if self.pos.y >= SCREEN_HEIGHT - self.image.get_height() - self.terrain.get_height():
+            self.pos.y = SCREEN_HEIGHT - self.image.get_height() - self.terrain.get_height()
             self.velocity.y = 0
             self.on_ground = True
 
@@ -77,8 +77,8 @@ class Player(Entity):
             image = pygame.transform.flip(self.image, True, False)
         screen.blit(image, self.pos)
 
-    def update(self, keys, dt, ground_y):
+    def update(self, keys, dt):
         self.input(keys)
         self.state_handler()
         self.animate(dt)
-        self.move(dt, ground_y)
+        self.move(dt)

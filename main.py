@@ -9,18 +9,14 @@ clock = pygame.time.Clock()
 prev_time = time.time()
 running = True
 
-start_x = screen.get_width() / 2
-start_y = screen.get_height() / 2
-ground_y = screen.get_height() - 200
 terrain = Terrain("ground_tile.png")
-player = Player(start_x, start_y)
+player = Player(screen.get_width() / 2, screen.get_height() /2, terrain)
 
 updatable = pygame.sprite.Group()
 drawable = pygame.sprite.Group()
 
 updatable.add(player)
-drawable.add(terrain)
-drawable.add(player)
+drawable.add(player, terrain)
 
 while running:
     dt = time.time() - prev_time
@@ -38,7 +34,7 @@ while running:
         running = False
 
     for obj in updatable:
-        obj.update(keys, dt, ground_y)
+        obj.update(keys, dt)
 
     for obj in drawable:
         obj.draw(screen)
