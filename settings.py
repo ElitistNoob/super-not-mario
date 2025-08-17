@@ -1,10 +1,9 @@
 # settings
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
-FPS = 60
+FPS = 144
 
 GRAVITY = 900
 
 # Colors
 SKY_COLOR = (7, 155, 176)
-FPS = 60
