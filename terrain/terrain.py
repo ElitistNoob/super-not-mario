@@ -8,23 +8,18 @@ class Terrain(pygame.sprite.Sprite):
     def __init__(self, ground_type):
         super().__init__()
         self.image = pygame.image.load(os.path.join("assets", "terrain", ground_type))
-        self.rect = self.image.get_rect()
-        self.width = self.rect.width
-        self.height = self.rect.height
+        self.width = self.image.get_width()
+        self.height = self.image.get_height()
+        self.tiles = self._generate_tiles()
 
-    def get_ground(self):
+    def _generate_tiles(self):
         tiles = []
         for i in range(SCREEN_WIDTH // self.width +1):
-            pos = (i * self.width, SCREEN_HEIGHT - self.height)
-            tiles.append(pos)
+            rect = self.image.get_rect(topleft=(i * self.width, SCREEN_HEIGHT - self.height))
+            tiles.append(rect)
 
         return tiles
     
-    def get_height(self):
-        return self.height
-
     def draw(self, screen):
-        tiles = self.get_ground()
-
-        for tile in tiles:
+        for tile in self.tiles:
             screen.blit(self.image, tile)
