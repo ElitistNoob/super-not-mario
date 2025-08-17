@@ -5,15 +5,17 @@ from settings import GRAVITY
 from entities.entity import Entity
 from entities.state import State
 
+
 class Player(Entity):
-    def __init__(self,x , y, terrain):
-        super().__init__(x,y)
+    def __init__(self, x, y, terrain):
+        super().__init__(x, y)
         self.terrain = terrain
         self.sprites = load_player_sprites()
         self.image = scale_sprite(self.sprites[self.state][self.frame_index])
 
-        self.rect = self.image.get_rect(midbottom=(x,y))
+        self.rect = self.image.get_rect(midbottom=(x, y))
         self.pos = pygame.Vector2(self.rect.center)
+        self.layer = 2
 
         self.speed = 200
         self.animation_speed = 5
@@ -80,7 +82,7 @@ class Player(Entity):
         self.image = scale_sprite(self.sprites[self.state][int(self.frame_index)])
 
     def draw(self, screen):
-        image = self.image 
+        image = self.image
         if self.direction.x == -1:
             image = pygame.transform.flip(self.image, True, False)
         screen.blit(image, self.rect.topleft)

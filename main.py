@@ -1,5 +1,6 @@
 import pygame, time
 from terrain.ground.ground import Ground
+from terrain.shrubs.shrubs import Shrubs
 from entities.player.player import Player
 from settings import FPS, SKY_COLOR, SCREEN_WIDTH, SCREEN_HEIGHT
 
@@ -9,16 +10,18 @@ clock = pygame.time.Clock()
 prev_time = time.time()
 running = True
 
-terrain = Ground("ground_tile.png")
-terrain_rects = terrain.tiles
-starting_pos_x, starting_pos_y = terrain_rects[0].centerx, terrain_rects[0].top
-player = Player(starting_pos_x, starting_pos_y, terrain)
+ground = Ground("ground_tile.png")
+ground_rects = ground.tiles
+starting_pos_x, starting_pos_y = ground_rects[0].centerx, ground_rects[0].top
+
+shrubs = Shrubs(starting_pos_y)
+player = Player(starting_pos_x, starting_pos_y, ground)
 
 updatable = pygame.sprite.Group()
 updatable.add(player)
 
 drawable = pygame.sprite.Group()
-drawable.add(player, terrain)
+drawable.add(player, ground, shrubs)
 
 while running:
     dt = time.time() - prev_time
@@ -36,9 +39,9 @@ while running:
         running = False
 
     for obj in updatable:
-        obj.update(keys, dt, terrain_rects)
+        obj.update(keys, dt, ground_rects)
 
-    for obj in drawable:
+    for obj in sorted(drawable, key=lambda x: x.layer):
         obj.draw(screen)
 
     pygame.display.flip()
