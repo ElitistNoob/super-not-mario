@@ -1,13 +1,14 @@
 import os
 import pygame
 
+from common.utils.scale_sprite import scale_sprite
 from settings import SCREEN_HEIGHT, SCREEN_WIDTH
 
 
 class Terrain(pygame.sprite.Sprite):
     def __init__(self, ground_type):
         super().__init__()
-        self.image = pygame.image.load(os.path.join("assets", "terrain", ground_type))
+        self.image = scale_sprite(pygame.image.load(os.path.join("assets", "terrain", ground_type)))
         self.width = self.image.get_width()
         self.height = self.image.get_height()
         self.tiles = self._generate_tiles()

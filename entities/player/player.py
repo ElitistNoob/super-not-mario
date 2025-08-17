@@ -1,16 +1,16 @@
 import pygame
+from common.utils.scale_sprite import scale_sprite
 from entities.player.sprite_loader import load_player_sprites
-from settings import GRAVITY, SCREEN_HEIGHT
+from settings import GRAVITY
 from entities.entity import Entity
 from entities.state import State
 
-
 class Player(Entity):
     def __init__(self,x , y, terrain):
-        super().__init__(x,y, width=32, height=32)
+        super().__init__(x,y)
         self.terrain = terrain
         self.sprites = load_player_sprites()
-        self.image = self.sprites[self.state][self.frame_index]
+        self.image = scale_sprite(self.sprites[self.state][self.frame_index])
 
         self.rect = self.image.get_rect(midbottom=(x,y))
         self.pos = pygame.Vector2(self.rect.center)
@@ -77,10 +77,10 @@ class Player(Entity):
         if self.frame_index >= len(self.sprites[self.state]):
             self.frame_index = 0
 
-        self.image = self.sprites[self.state][int(self.frame_index)]
+        self.image = scale_sprite(self.sprites[self.state][int(self.frame_index)])
 
     def draw(self, screen):
-        image = self.image
+        image = self.image 
         if self.direction.x == -1:
             image = pygame.transform.flip(self.image, True, False)
         screen.blit(image, self.rect.topleft)
