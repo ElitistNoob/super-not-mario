@@ -1,7 +1,7 @@
 import pygame, time
+from terrain.ground.ground import Ground
 from entities.player.player import Player
 from settings import FPS, SKY_COLOR, SCREEN_WIDTH, SCREEN_HEIGHT
-from terrain.terrain import Terrain
 
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -9,21 +9,21 @@ clock = pygame.time.Clock()
 prev_time = time.time()
 running = True
 
-terrain = Terrain("ground_tile.png")
+terrain = Ground("ground_tile.png")
 terrain_rects = terrain.tiles
 starting_pos_x, starting_pos_y = terrain_rects[0].centerx, terrain_rects[0].top
 player = Player(starting_pos_x, starting_pos_y, terrain)
 
 updatable = pygame.sprite.Group()
-drawable = pygame.sprite.Group()
-
 updatable.add(player)
+
+drawable = pygame.sprite.Group()
 drawable.add(player, terrain)
 
 while running:
     dt = time.time() - prev_time
     prev_time = time.time()
-    
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
