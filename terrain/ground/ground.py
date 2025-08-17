@@ -1,13 +1,14 @@
 import os
 import pygame
+from common.utils.asset_loader import get_image_path, load_image
 from terrain.terrain import Terrain
-from common.utils.scale_sprite import scale_sprite
+from common.utils.graphic_utils import scale_sprite
 
 
 class Ground(Terrain):
-    def __init__(self, ground_type):
-        image_path = os.path.join("assets", "terrain", ground_type)
-        scaled_image = scale_sprite(pygame.image.load(image_path).convert_alpha())
+    def __init__(self, name):
+        path = get_image_path("assets", "terrain")
+        scaled_image = scale_sprite(load_image(path, name))
         super().__init__(scaled_image)
         self.tiles = self._generate_tiles()
 

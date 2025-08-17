@@ -1,21 +1,22 @@
 import pygame
-from common.utils.scale_sprite import scale_sprite
-from entities.player.sprite_loader import load_player_sprites
+from common.utils.graphic_utils import scale_sprite
+from entities.player.player_sprites import load_player_sprites
 from settings import GRAVITY
 from entities.entity import Entity
 from entities.state import State
+from terrain.ground.ground import Ground
+from terrain.pipe.pipe import Pipe
 
 
 class Player(Entity):
-    def __init__(self, x, y, terrain):
+    def __init__(self, x, y, terrain_group):
         super().__init__(x, y)
-        self.terrain = terrain
+        self.terrain = terrain_group
         self.sprites = load_player_sprites()
         self.image = scale_sprite(self.sprites[self.state][self.frame_index])
 
         self.rect = self.image.get_rect(midbottom=(x, y))
         self.pos = pygame.Vector2(self.rect.center)
-        self.layer = 2
 
         self.speed = 200
         self.animation_speed = 5
@@ -54,21 +55,33 @@ class Player(Entity):
         if keys[pygame.K_SPACE]:
             self.jump()
 
-    def move(self, dt, terrain_rects):
+    def move(self, dt):
         self.velocity.y += GRAVITY * dt
         self.velocity.x = self.direction.x * self.speed
         self.pos += self.velocity * dt
 
         self.rect.center = round(self.pos)
 
-        for tile in terrain_rects:
-            if not self.rect.colliderect(tile):
+        collidable_rects = [
+            tile_rect
+            for sprite in self.terrain.sprites()
+            if isinstance(sprite, (Ground, Pipe))
+            for tile_rect in getattr(sprite, "tiles", [sprite.rect])
+        ]
+
+        landing_rect = None
+        for rect in collidable_rects:
+            if not self.rect.colliderect(rect):
                 continue
 
-            if self.velocity.y > 0 and self.rect.bottom >= tile.top:
-                self.rect.bottom = tile.top
-                self.velocity.y = 0
-                self.on_ground = True
+            if self.velocity.y > 0 and self.rect.bottom >= rect.top:
+                if landing_rect is None or rect.top < landing_rect.top:
+                    landing_rect = rect
+
+        if landing_rect:
+            self.rect.bottom = landing_rect.top
+            self.velocity.y = 0
+            self.on_ground = True
 
         self.pos = pygame.math.Vector2(self.rect.center)
 
@@ -87,8 +100,8 @@ class Player(Entity):
             image = pygame.transform.flip(self.image, True, False)
         screen.blit(image, self.rect.topleft)
 
-    def update(self, keys, dt, terrain_rects):
+    def update(self, keys, dt):
         self.input(keys)
         self.state_handler()
         self.animate(dt)
-        self.move(dt, terrain_rects)
+        self.move(dt)
