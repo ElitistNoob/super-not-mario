@@ -1,9 +1,10 @@
 import pygame, time
+from common.utils.debug_utils import draw_green_rect, draw_red_rect
 from terrain.ground.ground import Ground
 from terrain.pipe.pipe import Pipe
 from terrain.shrubs.shrubs import Shrubs
 from entities.player.player import Player
-from settings import FPS, SKY_COLOR, SCREEN_WIDTH, SCREEN_HEIGHT
+from settings import FPS, SKY_COLOR, SCREEN_WIDTH, SCREEN_HEIGHT, DEBUG_MODE
 
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -48,6 +49,13 @@ while running:
 
     for obj in sorted(drawable, key=lambda x: x.layer):
         obj.draw(screen)
+
+        if DEBUG_MODE is False:
+            continue
+        if isinstance(obj, Player):
+            draw_green_rect(screen, obj.rect)
+        if isinstance(obj, Pipe):
+            draw_red_rect(screen, obj.rect)
 
     pygame.display.flip()
     dt = clock.tick(FPS) / 1000

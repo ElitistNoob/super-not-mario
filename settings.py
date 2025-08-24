@@ -1,3 +1,5 @@
+import sys
+
 # settings
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
@@ -7,3 +9,7 @@ GRAVITY = 900
 
 # Colors
 SKY_COLOR = (7, 155, 176)
+
+
+# Debug
+DEBUG_MODE = "--debug" in sys.argv
