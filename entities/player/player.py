@@ -23,6 +23,24 @@ class Player(Entity):
         self.jump_strength = -400
         self.is_moving = False
 
+    @property
+    def foot_rect(self):
+        foot_height = max(4, int(self.rect.height * 0.2))
+        return pygame.Rect(
+            self.rect.left + int(self.rect.width * 0.3),
+            self.rect.bottom - foot_height,
+            int(self.rect.width * 0.5),
+            foot_height,
+        )
+
+    def get_collision_rects(self, *classes):
+        return [
+            tile_rect
+            for sprite in self.terrain.sprites()
+            if isinstance(sprite, (classes))
+            for tile_rect in getattr(sprite, "tiles", [sprite.rect])
+        ]
+
     def state_handler(self):
         previous_state = self.state
 
@@ -58,30 +76,34 @@ class Player(Entity):
     def move(self, dt):
         self.velocity.y += GRAVITY * dt
         self.velocity.x = self.direction.x * self.speed
-        self.pos += self.velocity * dt
 
-        self.rect.center = round(self.pos)
+        self.pos.x += self.velocity.x * dt
+        self.rect.centerx = round(self.pos.x)
 
-        collidable_rects = [
-            tile_rect
-            for sprite in self.terrain.sprites()
-            if isinstance(sprite, (Ground, Pipe))
-            for tile_rect in getattr(sprite, "tiles", [sprite.rect])
-        ]
-
-        landing_rect = None
-        for rect in collidable_rects:
+        collidable_rects_x = self.get_collision_rects(Ground, Pipe)
+        for rect in collidable_rects_x:
             if not self.rect.colliderect(rect):
                 continue
 
-            if self.velocity.y > 0 and self.rect.bottom >= rect.top:
-                if landing_rect is None or rect.top < landing_rect.top:
-                    landing_rect = rect
+            if self.velocity.x > 0:
+                self.rect.right = rect.left
+            if self.velocity.x < 0:
+                self.rect.left = rect.right
+            self.pos.x = self.rect.centerx
 
-        if landing_rect:
-            self.rect.bottom = landing_rect.top
-            self.velocity.y = 0
-            self.on_ground = True
+        self.pos.y += self.velocity.y * dt
+        self.rect.centery = round(self.pos.y)
+
+        collidable_rects_y = self.get_collision_rects(Ground, Pipe)
+        for rect in collidable_rects_y:
+            if not self.foot_rect.colliderect(rect):
+                continue
+
+            if self.velocity.y > 0:
+                self.rect.bottom = rect.top
+                self.velocity.y = 0
+                self.on_ground = True
+            self.pos.y = self.rect.centery
 
         self.pos = pygame.math.Vector2(self.rect.center)
 
@@ -95,6 +117,8 @@ class Player(Entity):
         self.image = scale_sprite(self.sprites[self.state][int(self.frame_index)])
 
     def draw(self, screen):
+        collision_rect = self.get_collision_rects(Pipe)
+        collision_rect.append(self.foot_rect)
         image = self.image
         if self.direction.x == -1:
             image = pygame.transform.flip(self.image, True, False)
