@@ -15,5 +15,6 @@ class Entity(pygame.sprite.Sprite):
         self.pos = pygame.math.Vector2(self.rect.center)
         self.velocity = pygame.Vector2(0, 0)
         self.direction = pygame.math.Vector2()
+        self.facing_left = False
         self.on_ground = True
         self.layer = layer

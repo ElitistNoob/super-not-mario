@@ -62,9 +62,11 @@ class Player(Entity):
     def input(self, keys):
         if keys[pygame.K_d]:
             self.direction.x = 1
+            self.facing_left = False
             self.is_moving = True
         elif keys[pygame.K_a]:
             self.direction.x = -1
+            self.facing_left = True
             self.is_moving = True
         else:
             self.direction.x = 0
@@ -80,8 +82,9 @@ class Player(Entity):
         self.pos.x += self.velocity.x * dt
         self.rect.centerx = round(self.pos.x)
 
-        collidable_rects_x = self.get_collision_rects(Ground, Pipe)
-        for rect in collidable_rects_x:
+        collidable_rects = self.get_collision_rects(Ground, Pipe)
+
+        for rect in collidable_rects:
             if not self.rect.colliderect(rect):
                 continue
 
@@ -94,8 +97,7 @@ class Player(Entity):
         self.pos.y += self.velocity.y * dt
         self.rect.centery = round(self.pos.y)
 
-        collidable_rects_y = self.get_collision_rects(Ground, Pipe)
-        for rect in collidable_rects_y:
+        for rect in collidable_rects:
             if not self.foot_rect.colliderect(rect):
                 continue
 
@@ -117,10 +119,8 @@ class Player(Entity):
         self.image = scale_sprite(self.sprites[self.state][int(self.frame_index)])
 
     def draw(self, screen):
-        collision_rect = self.get_collision_rects(Pipe)
-        collision_rect.append(self.foot_rect)
         image = self.image
-        if self.direction.x == -1:
+        if self.facing_left:
             image = pygame.transform.flip(self.image, True, False)
         screen.blit(image, self.rect.topleft)
 
